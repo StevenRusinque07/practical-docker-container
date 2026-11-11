@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  servicio-urbano:
+    build: .
+    container_name: contenedor_gestion_urbana
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+        reservations:
+          cpus: '0.10'
+          memory: 64M
