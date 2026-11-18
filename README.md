@@ -1,14 +1,14 @@
 # Solución de Sistemas Distribuidos Basada en Contenedores (Docker)
 
-Este repositorio contiene la implementación práctica del microservicio de gestión urbana empaquetado mediante la tecnología de **Contenedores (Docker)**.
+Implementación práctica del sistema distribuido de gestión urbana inteligente (**Cajicá / Sabana Centro**) empaquetado con **Docker** bajo principios de ingeniería sostenible (*Green Computing*).
 
-## Estructura del Repositorio
-- `Dockerfile`: Configuración basada en la imagen minimalista `python:3.11-alpine`.
-- `docker-compose.yml`: Orquestación local con cuotas estrictas de recursos (CPU: 0.50, RAM: 256MB).
-- `src/app.py`: Microservicio distribuido en Python de telemetría urbana.
+## Arquitectura Implementada
+- **`mqtt-broker` (`eclipse-mosquitto:2.0-alpine`)**: Capa de comunicación ligera mediante protocolo MQTT.
+- **`edge-gateway` (`src/edge_simulator.py`)**: Simulación de sensores IoT y filtrado previo en el borde (*Edge Computing*) con firma de seguridad **JWT**.
+- **`urban-microservice` (`src/app.py`)**: Microservicio central en `python:3.11-alpine` (menor a 55 MB) con cuotas estrictas de hardware (`0.50` CPU y `256 MB` RAM) que gestiona movilidad adaptativa, alumbrado LED *dimmer* y rutas dinámicas de residuos con IA.
 
-## Instrucciones de Despliegue
+## Instrucciones de Despliegue y Auditoría
 
-1. **Construir y ejecutar el contenedor:**
+1. **Construir y levantar el clúster distribuido:**
    ```bash
-   docker-compose up -d --build
+   docker compose up -d --build

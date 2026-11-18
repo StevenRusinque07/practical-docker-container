@@ -1,17 +1,55 @@
-version: '3.8'
-
 services:
-  servicio-urbano:
-    build: .
-    container_name: contenedor_gestion_urbana
-    ports:
-      - "5000:5000"
+  mqtt-broker:
+    image: eclipse-mosquitto:2.0
+    container_name: mqtt-broker
     restart: unless-stopped
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      - red_urbana
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+
+  edge-gateway:
+    build: .
+    container_name: edge-gateway
+    command: ["python", "src/edge_simulator.py"]
+    restart: unless-stopped
+    depends_on:
+      - mqtt-broker
+    environment:
+      - MQTT_HOST=mqtt-broker
+      - JWT_SECRET=clave_secreta_umb_2026
+    networks:
+      - red_urbana
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+
+  urban-microservice:
+    build: .
+    container_name: urban-microservice
+    restart: unless-stopped
+    depends_on:
+      - mqtt-broker
+    ports:
+      - "8000:8000"
+    environment:
+      - MQTT_HOST=mqtt-broker
+      - JWT_SECRET=clave_secreta_umb_2026
+    networks:
+      - red_urbana
     deploy:
       resources:
         limits:
           cpus: '0.50'
           memory: 256M
-        reservations:
-          cpus: '0.10'
-          memory: 64M
+
+networks:
+  red_urbana:
+    driver: bridge

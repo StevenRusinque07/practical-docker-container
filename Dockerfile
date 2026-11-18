@@ -1,18 +1,18 @@
-# Imagen base ligera para minimizar consumo de espacio y RAM
 FROM python:3.11-alpine
 
-# Directorio de trabajo en el contenedor
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# Copiar e instalar dependencias estrictas
-COPY src/requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el código fuente
-COPY src/ .
+COPY src/ ./src/
 
-# Exponer el puerto de escucha del microservicio
-EXPOSE 5000
+RUN adduser -D appuser
+USER appuser
 
-# Comando de ejecución
-CMD ["python", "app.py"]
+EXPOSE 8000
+
+CMD ["python", "src/app.py"]
